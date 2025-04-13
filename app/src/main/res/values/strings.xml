@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_search">Search</string>
+    <string name="action_sort">Sort</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_more">More</string>
+    <string name="app_name">AppView</string>
+    <string name="app_icon_description">Application icon</string>
+    <string name="installed_date_format">Inst: %1$s</string>
+    <string name="updated_date_format">Updt: %1$s</string>
+    <string name="app_type_system">System</string>
+    <string name="app_type_user">User</string>
+    <string name="size_details">Size details</string>
+    <string name="code_apk_file">Code (apk file)</string>
+    <string name="data">Data</string>
+    <string name="cache">Cache</string>
+    <string name="app_details">App Details</string>
+</resources>
