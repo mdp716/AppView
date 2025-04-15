@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -26,7 +26,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Rest of your layout remains the same -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,27 +33,14 @@
             android:padding="16dp">
 
             <!-- App header section -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/versionTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
-
-                <ImageView
-                    android:id="@+id/iv_app_icon"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:contentDescription="@string/app_icon_description" />
-
-                <TextView
-                    android:id="@+id/versionTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:textSize="16sp"
-                    tools:text="14.0.651234-release (140651234)" />
-            </LinearLayout>
+                android:drawablePadding="8dp"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_app_icon"
+                tools:text="14.0.651234-release (140651234)" />
 
             <!-- App path -->
             <TextView
@@ -151,8 +137,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
+                        app:drawableEndCompat="@drawable/ic_chevron_right"
                         android:background="?attr/selectableItemBackground"
-                        android:drawableEnd="@drawable/ic_chevron_right"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="Activities (55)" />
@@ -168,8 +154,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
+                        app:drawableEndCompat="@drawable/ic_chevron_right"
                         android:background="?attr/selectableItemBackground"
-                        android:drawableEnd="@drawable/ic_chevron_right"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="Services (76)" />
@@ -185,8 +171,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
+                        app:drawableEndCompat="@drawable/ic_chevron_right"
                         android:background="?attr/selectableItemBackground"
-                        android:drawableEnd="@drawable/ic_chevron_right"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="Receivers (39)" />
@@ -202,8 +188,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
+                        app:drawableEndCompat="@drawable/ic_chevron_right"
                         android:background="?attr/selectableItemBackground"
-                        android:drawableEnd="@drawable/ic_chevron_right"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         tools:text="Providers (11)" />
