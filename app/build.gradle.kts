@@ -47,11 +47,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // Glide for image loading
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    // ksp("com.github.bumptech.glide:ksp:4.16.0") // For Kotlin KSP (preferred over annotationProcessor)
-
-    // Kotlin Coroutines (Optional but recommended for background tasks)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // Or latest
 }

@@ -67,14 +67,7 @@ class AppDetailActivity : AppCompatActivity() {
                 // Set app type
                 val typeTextView: TextView = findViewById(R.id.tv_app_type)
                 val isSystemApp = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
-                typeTextView.text = if (isSystemApp) "System" else "User"
-            }
-
-            // Set package name
-            val receivedPackageName = intent.getStringExtra("packageName") ?: run {
-                Toast.makeText(this, "Package name is missing", Toast.LENGTH_SHORT).show()
-                finish()
-                return
+                typeTextView.text = getString(if (isSystemApp) R.string.app_type_system else R.string.app_type_user)
             }
 
             // Set version info
@@ -84,16 +77,16 @@ class AppDetailActivity : AppCompatActivity() {
                 @Suppress("DEPRECATION")
                 packageInfo.versionCode.toLong()
             }
-            val versionName = packageInfo.versionName ?: "Unknown"
+            val versionName = packageInfo.versionName ?: getString(R.string.unknown_version)
             val versionTextView: TextView? = findViewById(R.id.versionTextView)
-            versionTextView?.text = "$versionName ($versionCode)"
+            versionTextView?.text = getString(R.string.version_info, versionName, versionCode)
 
             // Set installation and update dates
             val installDateTextView: TextView = findViewById(R.id.tv_install_date)
-            installDateTextView.text = "Installation: ${AppListUtil.formatDateTime(packageInfo.firstInstallTime)}"
+            installDateTextView.text = getString(R.string.installation_date, AppListUtil.formatDateTime(packageInfo.firstInstallTime))
 
             val updateDateTextView: TextView = findViewById(R.id.tv_update_date)
-            updateDateTextView.text = "Update: ${AppListUtil.formatDateTime(packageInfo.lastUpdateTime)}"
+            updateDateTextView.text = getString(R.string.update_date, AppListUtil.formatDateTime(packageInfo.lastUpdateTime))
 
             // Add expandable sections for activities, services, etc.
             setupExpandableSections(packageName)
@@ -105,9 +98,6 @@ class AppDetailActivity : AppCompatActivity() {
     }
 
     private fun setupExpandableSections(packageName: String) {
-        // This would set up the expandable sections for Activities, Services, etc.
-        // For simplicity, we'll just count them in this example
-
         try {
             val packageInfo = packageManager.getPackageInfo(packageName,
                 android.content.pm.PackageManager.GET_ACTIVITIES or
@@ -118,22 +108,22 @@ class AppDetailActivity : AppCompatActivity() {
             // Set up Activities section
             val activitiesTextView: TextView = findViewById(R.id.tv_activities)
             val activitiesCount = packageInfo.activities?.size ?: 0
-            activitiesTextView.text = "Activities ($activitiesCount)"
+            activitiesTextView.text = getString(R.string.activities_count, activitiesCount)
 
             // Set up Services section
             val servicesTextView: TextView = findViewById(R.id.tv_services)
             val servicesCount = packageInfo.services?.size ?: 0
-            servicesTextView.text = "Services ($servicesCount)"
+            servicesTextView.text = getString(R.string.services_count, servicesCount)
 
             // Set up Receivers section
             val receiversTextView: TextView = findViewById(R.id.tv_receivers)
             val receiversCount = packageInfo.receivers?.size ?: 0
-            receiversTextView.text = "Receivers ($receiversCount)"
+            receiversTextView.text = getString(R.string.receivers_count, receiversCount)
 
             // Set up Providers section
             val providersTextView: TextView = findViewById(R.id.tv_providers)
             val providersCount = packageInfo.providers?.size ?: 0
-            providersTextView.text = "Providers ($providersCount)"
+            providersTextView.text = getString(R.string.providers_count, providersCount)
 
         } catch (e: Exception) {
             e.printStackTrace()
