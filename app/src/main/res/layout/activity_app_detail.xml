@@ -33,28 +33,15 @@
             android:padding="16dp">
 
             <!-- App header section -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/versionTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:drawableStart="@drawable/ic_placeholder"
+                android:drawablePadding="16dp"
                 android:gravity="center_vertical"
-                android:paddingBottom="8dp">
-
-                <ImageView
-                    android:id="@+id/iv_app_icon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:contentDescription="@string/app_icon"
-                    tools:src="@drawable/ic_placeholder" />
-
-                <TextView
-                    android:id="@+id/versionTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:textSize="16sp"
-                    tools:text="14.0.651234-release (140651234)" />
-            </LinearLayout>
+                android:textSize="16sp"
+                tools:text="14.0.651234-release (140651234)" />
 
             <!-- App path -->
             <TextView
