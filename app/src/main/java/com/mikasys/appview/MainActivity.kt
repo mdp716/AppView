@@ -1,4 +1,4 @@
-//testing commit
+//forcing a commit
 package com.mikasys.appview
 
 import android.os.Bundle
