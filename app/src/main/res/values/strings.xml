@@ -17,6 +17,7 @@
     <string name="app_details">App Details</string>
     <string name="search_hint">Search Hint</string>
     <string name="loading_content_description">Loading</string>
+    <string name="app_icon">App Icon</string>
 
     <!-- Added strings for resolving warnings -->
     <string name="installation_date">Installation: %1$s</string>

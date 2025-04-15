@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.androidx.recyclerview) // Correct alias
     implementation(libs.androidx.lifecycle.runtime.ktx) // Correct alias
     implementation(libs.androidx.activity)
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
