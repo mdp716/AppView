@@ -1,4 +1,3 @@
-//forcing a commit again
 package com.mikasys.appview
 
 import android.os.Bundle
