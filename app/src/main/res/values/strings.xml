@@ -17,4 +17,13 @@
     <string name="app_details">App Details</string>
     <string name="search_hint">Search Hint</string>
     <string name="loading_content_description">Loading</string>
+
+    <!-- Added strings for resolving warnings -->
+    <string name="installation_date">Installation: %1$s</string>
+    <string name="update_date">Update: %1$s</string>
+    <string name="activities_count">Activities (%1$d)</string>
+    <string name="services_count">Services (%1$d)</string>
+    <string name="receivers_count">Receivers (%1$d)</string>
+    <string name="providers_count">Providers (%1$d)</string>
+    <string name="version_info">%1$s (%2$d)</string>
 </resources>

@@ -43,6 +43,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview) // Correct alias
     implementation(libs.androidx.lifecycle.runtime.ktx) // Correct alias
+    implementation(libs.androidx.activity)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")

@@ -71,7 +71,7 @@ class AppDetailActivity : AppCompatActivity() {
             }
 
             // Set package name
-            val packageName = intent.getStringExtra("packageName") ?: run {
+            val receivedPackageName = intent.getStringExtra("packageName") ?: run {
                 Toast.makeText(this, "Package name is missing", Toast.LENGTH_SHORT).show()
                 finish()
                 return
