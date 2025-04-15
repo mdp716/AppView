@@ -37,11 +37,12 @@ android {
 
 // build.gradle.kts (Kotlin DSL)
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0") // Or latest
-    implementation("androidx.appcompat:appcompat:1.6.1") // Or latest
-    implementation("com.google.android.material:material:1.11.0") // Or latest
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Or latest
-    implementation("androidx.recyclerview:recyclerview:1.3.2") // Or latest
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.recyclerview) // Correct alias
+    implementation(libs.androidx.lifecycle.runtime.ktx) // Correct alias
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")

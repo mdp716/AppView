@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
@@ -70,14 +71,22 @@ class AppDetailActivity : AppCompatActivity() {
             }
 
             // Set package name
-            val packageNameTextView: TextView = findViewById(R.id.tv_package_name)
-            packageNameTextView.text = packageName
+            val packageName = intent.getStringExtra("packageName") ?: run {
+                Toast.makeText(this, "Package name is missing", Toast.LENGTH_SHORT).show()
+                finish()
+                return
+            }
 
             // Set version info
-            val versionTextView: TextView = findViewById(R.id.tv_version)
-            val versionCode = packageInfo.longVersionCode
+            val versionCode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                packageInfo.longVersionCode
+            } else {
+                @Suppress("DEPRECATION")
+                packageInfo.versionCode.toLong()
+            }
             val versionName = packageInfo.versionName ?: "Unknown"
-            versionTextView.text = "$versionName ($versionCode)"
+            val versionTextView: TextView? = findViewById(R.id.versionTextView)
+            versionTextView?.text = "$versionName ($versionCode)"
 
             // Set installation and update dates
             val installDateTextView: TextView = findViewById(R.id.tv_install_date)

@@ -15,4 +15,6 @@
     <string name="data">Data</string>
     <string name="cache">Cache</string>
     <string name="app_details">App Details</string>
+    <string name="search_hint">Search Hint</string>
+    <string name="loading_content_description">Loading</string>
 </resources>

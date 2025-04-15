@@ -1,104 +1,145 @@
+//testing commit
 package com.mikasys.appview
 
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar // Correct import
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-// Consider using Coroutines or AsyncTask for background loading
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), AppListAdapter.OnAppClickListener {
 
-    private lateinit var recyclerView: RecyclerView
+    companion object {
+        const val REFRESHING_MESSAGE = "Refreshing..."
+        const val SORT_CLICKED_MESSAGE = "Sort clicked (implement sorting logic)"
+        const val MORE_CLICKED_MESSAGE = "More clicked (implement more options)"
+    }
+
+    private lateinit var rvAppList: RecyclerView
+    private lateinit var ivLoading: ImageView
     private lateinit var appListAdapter: AppListAdapter
     private var appList: List<AppInfo> = emptyList()
-
-    // Coroutine scope for background tasks
-    private val activityScope = CoroutineScope(Dispatchers.Main + Job())
+    private var filteredAppList: List<AppInfo> = emptyList()
+    private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Setup Toolbar
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        // Set the Toolbar as the SupportActionBar
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Setup RecyclerView
-        recyclerView = findViewById(R.id.rv_app_list)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        // Initialize views
+        rvAppList = findViewById(R.id.rv_app_list)
+        ivLoading = findViewById(R.id.iv_loading)
 
-        // Add dividers between items
-        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        // Set up RecyclerView
+        rvAppList.layoutManager = LinearLayoutManager(this)
 
-        // Initialize adapter with empty list initially
-        appListAdapter = AppListAdapter(appList)
-        appListAdapter.setOnAppClickListener(this) // Set the click listener
-        recyclerView.adapter = appListAdapter
+        // Create the adapter
+        appListAdapter = AppListAdapter(emptyList())
+        appListAdapter.setOnAppClickListener(this)
+        rvAppList.adapter = appListAdapter
+        rvAppList.visibility = View.GONE // Hide RecyclerView initially
 
-        // Load app list in the background
+        // Show loading icon
+        ivLoading.visibility = View.VISIBLE
+
+        // Load data
         loadApps()
     }
 
     private fun loadApps() {
-        // Show loading indicator (optional)
-        activityScope.launch(Dispatchers.IO) { // Run fetching on background thread
-            val loadedApps = AppListUtil.getInstalledApps(this@MainActivity)
-            withContext(Dispatchers.Main) { // Switch back to main thread to update UI
-                appList = loadedApps.sortedBy { it.appName.lowercase() } // Sort apps alphabetically
-                appListAdapter.updateData(appList)
-                // Hide loading indicator (optional)
+        ivLoading.visibility = View.VISIBLE
+        rvAppList.visibility = View.GONE
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val loadedApps = AppListUtil.getInstalledApps(this@MainActivity)
+                withContext(Dispatchers.Main) {
+                    appList = loadedApps.sortedBy { it.appName.trim().lowercase() }
+                    filteredAppList = appList
+                    appListAdapter.updateData(filteredAppList)
+                    ivLoading.visibility = View.GONE
+                    rvAppList.visibility = View.VISIBLE
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Failed to load apps: ${e.message}", Toast.LENGTH_SHORT).show()
+                    ivLoading.visibility = View.GONE
+                }
             }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-        // Setup SearchView if needed
-        // val searchItem = menu.findItem(R.id.action_search)
-        // val searchView = searchItem.actionView as SearchView
-        // searchView.setOnQueryTextListener(...)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        searchView = searchItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterApps(newText?.trim())
+                return true
+            }
+        })
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_refresh -> {
-                Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
-                loadApps() // Reload the list
+                Toast.makeText(this, REFRESHING_MESSAGE, Toast.LENGTH_SHORT).show()
+                loadApps()
                 true
             }
+
             R.id.action_sort -> {
-                Toast.makeText(this, "Sort clicked (implement sorting logic)", Toast.LENGTH_SHORT).show()
-                // Implement different sorting options here
+                Toast.makeText(this, SORT_CLICKED_MESSAGE, Toast.LENGTH_SHORT).show()
+                // Implement sorting logic here
                 true
             }
-            R.id.action_search -> {
-                // Handled by SearchView setup in onCreateOptionsMenu usually
-                true
-            }
+
+            R.id.action_search -> true
             R.id.action_more -> {
-                Toast.makeText(this, "More clicked (implement more options)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, MORE_CLICKED_MESSAGE, Toast.LENGTH_SHORT).show()
+                // Implement more options logic here
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        activityScope.cancel() // Cancel coroutines when activity is destroyed
-    }
-
-    // Implementation of OnAppClickListener interface
     override fun onAppClick(packageName: String) {
-        // Open app detail activity when an app is clicked
         val intent = AppDetailActivity.createIntent(this, packageName)
         startActivity(intent)
+    }
+
+    private fun filterApps(query: String?) {
+        filteredAppList = if (query.isNullOrBlank()) {
+            appList
+        } else {
+            appList.filter {
+                it.appName.contains(query, ignoreCase = true)
+            }
+        }
+        appListAdapter.updateData(filteredAppList)
     }
 }

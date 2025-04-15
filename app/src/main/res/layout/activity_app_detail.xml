@@ -48,23 +48,13 @@
                     android:contentDescription="@string/app_icon_description" />
 
                 <TextView
-                    android:id="@+id/tv_package_name"
-                    android:layout_width="0dp"
+                    android:id="@+id/versionTextView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="8dp"
                     android:textSize="16sp"
-                    tools:text="com.google.android.projection.gearhead" />
+                    tools:text="14.0.651234-release (140651234)" />
             </LinearLayout>
-
-            <!-- Version information -->
-            <TextView
-                android:id="@+id/tv_version"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textSize="16sp"
-                tools:text="14.0.651234-release (140651234)" />
 
             <!-- App path -->
             <TextView
