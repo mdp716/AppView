@@ -4,23 +4,41 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search" android:title="@string/action_search"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 
     <item
         android:id="@+id/action_sort"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="@string/action_sort"
-        app:showAsAction="ifRoom" />
+        android:title="Sort"
+        app:showAsAction="always">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sort_name"
+                    android:checked="true"
+                    android:title="Name" />
+                <item
+                    android:id="@+id/sort_package"
+                    android:title="Package" />
+                <item
+                    android:id="@+id/sort_type"
+                    android:title="System/User" />
+                <item
+                    android:id="@+id/sort_date"
+                    android:title="Install Date" />
+                <item
+                    android:id="@+id/sort_size"
+                    android:title="Size" />
+            </group>
+        </menu>
+    </item>
 
     <item
-        android:id="@+id/action_refresh"
-        android:icon="@android:drawable/ic_menu_rotate" android:title="@string/action_refresh"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_more"
-        android:icon="@android:drawable/ic_menu_more" android:title="@string/action_more"
+        android:id="@+id/action_about"
+        android:title="About"
         app:showAsAction="never" />
+
 </menu>
