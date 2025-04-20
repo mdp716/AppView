@@ -1,31 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_search">Search</string>
+    <!-- App name -->
+    <string name="app_name">AppView</string>
+
+    <!-- Main menu items -->
+    <string name="search">Search</string>
+    <string name="search_hint">Search Hint</string>
+    <string name="sort">Sort</string>
+    <string name="about">About</string>
+
+    <!-- Sort options -->
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_package">Package</string>
+    <string name="sort_by_type">System/User</string>
+    <string name="sort_by_date">Install Date</string>
+    <string name="sort_by_size">Size</string>
+
+    <!-- Actions -->
     <string name="action_sort">Sort</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_more">More</string>
-    <string name="app_name">AppView</string>
+
+    <!-- App details -->
+    <string name="app_details">App Details</string>
     <string name="app_icon_description">Application icon</string>
-    <string name="installed_date_format">Inst: %1$s</string>
-    <string name="updated_date_format">Updt: %1$s</string>
-    <string name="app_type_system">System</string>
-    <string name="app_type_user">User</string>
+    <string name="version_format">Version %1$s (%2$d)</string>
+    <string name="system_app">System app</string>
+    <string name="user_app">User app</string>
+    <string name="installed_format">Installed: %1$s</string>
+    <string name="last_updated_format">Last updated: %1$s</string>
+    <string name="shared_user_id_format">Shared User ID: %1$s</string>
+
+    <!-- Size information -->
     <string name="size_details">Size details</string>
     <string name="code_apk_file">Code (apk file)</string>
     <string name="data">Data</string>
     <string name="cache">Cache</string>
-    <string name="app_details">App Details</string>
-    <string name="search_hint">Search Hint</string>
-    <string name="loading_content_description">Loading</string>
-    <string name="app_icon">App Icon</string>
+    <string name="internal">Internal</string>
+    <string name="external">External</string>
+    <string name="obb">Obb</string>
+    <string name="media">Media</string>
+    <string name="not_available">--</string>
 
-    <!-- Added strings for resolving warnings -->
-    <string name="installation_date">Installation: %1$s</string>
-    <string name="update_date">Update: %1$s</string>
+    <!-- Component information -->
+    <string name="component_details">Component Details</string>
     <string name="activities_count">Activities (%1$d)</string>
     <string name="services_count">Services (%1$d)</string>
     <string name="receivers_count">Receivers (%1$d)</string>
     <string name="providers_count">Providers (%1$d)</string>
-    <string name="version_info">%1$s (%2$d)</string>
-    <string name="unknown_version">Version: %1$s</string>
+
+    <!-- Traffic information -->
+    <string name="data_received_format">Received: %1$s</string>
+    <string name="data_sent_format">Sent: %1$s</string>
+
+    <!-- Menu items -->
+    <string name="open_app_settings">Open App Settings</string>
+    <string name="show_manifest">Show Manifest</string>
+
+    <!-- Error messages -->
+    <string name="error">Error</string>
+    <string name="error_no_package_name">Package name not provided</string>
+    <string name="error_package_not_found">Package not found</string>
+    <string name="error_unknown">An unknown error occurred</string>
+    <string name="manifest_file_error">Cannot access manifest file</string>
+    <string name="ok">OK</string>
+
+    <!-- Loading -->
+    <string name="loading">Loading…</string>
+    <string name="loading_content_description">Loading</string>
+
+    <!-- ... other string resources ... -->
+    <string name="data_transmission_info">* Data transmitted\nsince last boot</string>
 </resources>

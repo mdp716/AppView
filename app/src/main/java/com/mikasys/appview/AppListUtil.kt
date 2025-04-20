@@ -9,6 +9,7 @@ import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.io.File
 
 object AppListUtil {
 
@@ -30,33 +31,32 @@ object AppListUtil {
                     val appName = applicationInfo.loadLabel(packageManager).toString()
                     val packageName = packageInfo.packageName
                     val versionName = packageInfo.versionName ?: "Unknown"
-                    val versionCode = packageInfo.longVersionCode
 
                     // Get install time
-                    val installTime = packageManager.getPackageInfo(packageName, 0).firstInstallTime
-                    // Get last update time
-                    val lastUpdateTime = packageManager.getPackageInfo(packageName, 0).lastUpdateTime
-
+                    val installTime = Date(packageManager.getPackageInfo(packageName, 0).firstInstallTime)
+                    
                     val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
 
                     // Load the application icon
-                    val icon: Drawable? = try {
+                    val icon: Drawable = try {
                         applicationInfo.loadIcon(packageManager)
                     } catch (e: Exception) {
                         Log.e("AppListUtil", "Error loading icon for $packageName", e)
-                        // You might want a default placeholder icon here from context.getDrawable(...)
-                        null
+                        context.getDrawable(android.R.drawable.sym_def_app_icon) ?: throw e
                     }
 
+                    // Get app size
+                    val size = File(applicationInfo.sourceDir).length()
+
                     val appInfo = AppInfo(
-                        appName,
-                        packageName,
-                        versionName,
-                        versionCode,
-                        installTime,
-                        isSystemApp,
-                        icon,
-                        lastUpdateTime
+                        name = appName,
+                        packageName = packageName,
+                        icon = icon,
+                        isSystemApp = isSystemApp,
+                        installDate = installTime,
+                        lastUpdateTime = Date(packageInfo.lastUpdateTime),
+                        size = size,
+                        versionName = versionName
                     )
                     appList.add(appInfo)
                 } catch (e: Exception) {
@@ -74,9 +74,8 @@ object AppListUtil {
     }
 
     // Helper function to format the date using MM/dd/yyyy
-    fun formatDate(timestamp: Long): String {
+    fun formatDate(date: Date): String {
         val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-        val date = Date(timestamp)
         return dateFormat.format(date)
     }
 

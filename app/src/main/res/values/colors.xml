@@ -12,4 +12,7 @@
 
     <!-- System Colors -->
     <color name="transparent">#00000000</color>
+
+    <!-- New color for loading background -->
+    <color name="loading_background">#80000000</color>
 </resources>
