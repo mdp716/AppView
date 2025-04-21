@@ -1,15 +1,14 @@
 package com.mikasys.appview
 
 import android.graphics.drawable.Drawable
-import java.util.Date
 
 data class AppInfo(
-    val name: String,
+    val appName: String,
     val packageName: String,
-    val icon: Drawable,
+    val versionName: String,
+    val versionCode: Long,
+    val installTime: Long,
     val isSystemApp: Boolean,
-    val installDate: Date,
-    val lastUpdateTime: Date,
-    val size: Long,
-    val versionName: String
-) 
+    val icon: Drawable?,
+    val lastUpdateTime: Long // Add the last update time field
+)

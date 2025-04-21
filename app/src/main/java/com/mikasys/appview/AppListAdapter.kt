@@ -5,74 +5,102 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.*
+import com.bumptech.glide.Glide
 
-class AppListAdapter(
-    private var apps: List<AppInfo>,
-    private val onItemClick: (AppInfo) -> Unit
-) : RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
+class AppListAdapter(private var apps: List<AppInfo>) :
+    RecyclerView.Adapter<AppListAdapter.AppListViewHolder>() {
 
-    private var filteredApps = apps.toList()
-    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val iconView: ImageView = view.findViewById(R.id.app_icon)
-        val nameView: TextView = view.findViewById(R.id.app_name)
-        val versionView: TextView = view.findViewById(R.id.app_version)
-        val typeView: TextView = view.findViewById(R.id.app_type)
-        val packageView: TextView = view.findViewById(R.id.app_package)
-        val installDateView: TextView = view.findViewById(R.id.install_date)
-        val updateDateView: TextView = view.findViewById(R.id.update_date)
+    // Interface for item click events
+    interface OnAppClickListener {
+        fun onAppClick(packageName: String)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    private var appClickListener: OnAppClickListener? = null
+
+    // Set click listener
+    fun setOnAppClickListener(listener: OnAppClickListener) {
+        appClickListener = listener
+    }
+
+    // ViewHolder holds references to the views in list_item_app.xml
+    class AppListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val iconImageView: ImageView = view.findViewById(R.id.iv_app_icon)
+        val nameTextView: TextView = view.findViewById(R.id.tv_app_name)
+        val packageTextView: TextView = view.findViewById(R.id.tv_package_name)
+        val installDateTextView: TextView = view.findViewById(R.id.tv_app_install_time)
+        val updateDateTextView: TextView = view.findViewById(R.id.tv_app_update_time) // Updated reference
+        val versionTextView: TextView = view.findViewById(R.id.tv_app_version)
+        val typeTextView: TextView = view.findViewById(R.id.tv_app_type)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppListViewHolder {
+        // Inflate the layout for each item
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.app_list_item, parent, false)
-        return ViewHolder(view)
+            .inflate(R.layout.list_item_app, parent, false)
+        return AppListViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val app = filteredApps[position]
-        holder.iconView.setImageDrawable(app.icon)
-        holder.nameView.text = app.name
-        holder.versionView.text = app.versionName
-        holder.typeView.text = if (app.isSystemApp) "System" else "User"
-        holder.packageView.text = app.packageName
-        holder.installDateView.text = dateFormat.format(app.installDate)
-        holder.updateDateView.text = dateFormat.format(app.lastUpdateTime)
-        
-        holder.itemView.setOnClickListener { onItemClick(app) }
+    override fun onBindViewHolder(holder: AppListViewHolder, position: Int) {
+        val appInfo = apps[position]
+        val context = holder.itemView.context
+
+        // Bind data to the views
+        holder.nameTextView.text = appInfo.appName
+        holder.packageTextView.text = appInfo.packageName
+        holder.versionTextView.text = appInfo.versionName
+        // Update to use formatDate
+        holder.installDateTextView.text = context.getString(R.string.installed_date_format,AppListUtil.formatDate(appInfo.installTime))
+        // Bind update date
+        holder.updateDateTextView.text = context.getString(R.string.updated_date_format,AppListUtil.formatDate(appInfo.lastUpdateTime)) // Updated text
+        holder.typeTextView.text = if (appInfo.isSystemApp) {
+            context.getString(R.string.app_type_system) // Use string resource
+        } else {
+            context.getString(R.string.app_type_user) // Use string resource
+        }
+
+        // Load icon using Glide (or Picasso)
+        Glide.with(context)
+            .load(appInfo.icon)
+            // Optional: Add placeholder and error drawables
+            // .placeholder(R.drawable.ic_placeholder)
+            // .error(R.drawable.ic_error)
+            .into(holder.iconImageView)
+
+        // Set click listener for the entire item
+        holder.itemView.setOnClickListener {
+            appClickListener?.onAppClick(appInfo.packageName)
+        }
     }
 
-    override fun getItemCount() = filteredApps.size
+    override fun getItemCount(): Int = apps.size
 
-    fun updateList(newApps: List<AppInfo>) {
+    // Optional: Function to update the list data if it changes (e.g., after refresh)
+    fun updateData(newApps: List<AppInfo>) {
+        val diffResult = DiffUtil.calculateDiff(AppDiffCallback(apps, newApps))
         apps = newApps
-        filter("")
+        diffResult.dispatchUpdatesTo(this)
     }
 
-    fun filter(query: String) {
-        filteredApps = apps.filter { app ->
-            app.name.contains(query, ignoreCase = true) ||
-            app.packageName.contains(query, ignoreCase = true)
-        }
-        notifyDataSetChanged()
-    }
+    class AppDiffCallback(
+        private val oldList: List<AppInfo>,
+        private val newList: List<AppInfo>
+    ) : DiffUtil.Callback() {
 
-    fun sort(by: SortCriteria) {
-        filteredApps = when (by) {
-            SortCriteria.NAME -> filteredApps.sortedBy { it.name }
-            SortCriteria.PACKAGE -> filteredApps.sortedBy { it.packageName }
-            SortCriteria.TYPE -> filteredApps.sortedBy { it.isSystemApp }
-            SortCriteria.DATE -> filteredApps.sortedBy { it.installDate }
-            SortCriteria.SIZE -> filteredApps.sortedBy { it.size }
+        override fun getOldListSize(): Int = oldList.size
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldApp = oldList[oldItemPosition]
+            val newApp = newList[newItemPosition]
+            return oldApp.packageName == newApp.packageName
         }
-        notifyDataSetChanged()
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldApp = oldList[oldItemPosition]
+            val newApp = newList[newItemPosition]
+            return oldApp == newApp
+        }
     }
 }
-
-enum class SortCriteria {
-    NAME, PACKAGE, TYPE, DATE, SIZE
-} 
