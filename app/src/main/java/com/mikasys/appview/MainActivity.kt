@@ -16,6 +16,12 @@ import android.widget.ProgressBar
 import kotlinx.coroutines.*
 import java.util.Date
 import java.io.File
+import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.google.android.material.appbar.AppBarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -27,18 +33,38 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Set status bar to light mode (dark icons)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val windowInsetsController = WindowInsetsControllerCompat(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = true  // This makes the status bar icons dark
+        
+        // Initialize views
+        recyclerView = findViewById(R.id.rv_app_list)
+        progressBar = findViewById(R.id.iv_loading)
+        
         // Set up toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Initialize views
-        recyclerView = findViewById(R.id.appList)
-        progressBar = findViewById(R.id.progressBar)
+        // Apply window insets
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.coordinator_layout)) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            
+            // Apply margin to AppBarLayout instead of padding
+            val appBarLayout = findViewById<AppBarLayout>(R.id.appbar_layout)
+            val params = appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
+            params.topMargin = insets.top
+            appBarLayout.layoutParams = params
+            
+            // Ensure RecyclerView doesn't go under system bars
+            recyclerView.setPadding(0, 0, 0, insets.bottom)
+            
+            windowInsets
+        }
 
         // Set up RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = AppListAdapter(emptyList()) { appInfo ->
-            // Handle app click - launch AppDetailActivity
             startActivity(AppDetailActivity.createIntent(this, appInfo.packageName))
         }
         recyclerView.adapter = adapter
@@ -50,43 +76,43 @@ class MainActivity : AppCompatActivity() {
     private fun loadInstalledApps() {
         mainScope.launch {
             try {
-                // Show loading
                 progressBar.visibility = View.VISIBLE
                 recyclerView.visibility = View.GONE
 
-                // Load apps in background
                 val apps = withContext(Dispatchers.IO) {
                     packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
                         .mapNotNull { packageInfo ->
                             packageInfo.applicationInfo?.let { appInfo ->
                                 try {
                                     AppInfo(
-                                        name = appInfo.loadLabel(packageManager)?.toString() 
-                                            ?: packageInfo.packageName,
+                                        appName = appInfo.loadLabel(packageManager).toString(),
                                         packageName = packageInfo.packageName,
-                                        icon = appInfo.loadIcon(packageManager),
+                                        versionName = packageInfo.versionName ?: "",
+                                        versionCode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                                            packageInfo.longVersionCode
+                                        } else {
+                                            @Suppress("DEPRECATION")
+                                            packageInfo.versionCode.toLong()
+                                        },
+                                        installTime = packageInfo.firstInstallTime,
                                         isSystemApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0,
-                                        installDate = Date(packageInfo.firstInstallTime),
-                                        lastUpdateTime = Date(packageInfo.lastUpdateTime),
-                                        size = appInfo.sourceDir?.let { File(it).length() } ?: 0L,
-                                        versionName = packageInfo.versionName ?: ""
+                                        icon = appInfo.loadIcon(packageManager),
+                                        lastUpdateTime = packageInfo.lastUpdateTime
                                     )
                                 } catch (e: Exception) {
                                     null
                                 }
                             }
                         }
-                        .sortedBy { it.name.lowercase() }
+                        .sortedBy { it.appName.lowercase() }
                 }
 
-                // Update UI
                 progressBar.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
-                adapter.updateList(apps)  // Changed from updateApps to updateList
+                adapter.updateList(apps)
             } catch (e: Exception) {
                 e.printStackTrace()
                 progressBar.visibility = View.GONE
-                // You might want to show an error message to the user here
             }
         }
     }
@@ -140,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_about -> {
-                // Handle About action
+                showAboutDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)

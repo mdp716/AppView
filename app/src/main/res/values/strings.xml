@@ -71,4 +71,8 @@
 
     <!-- ... other string resources ... -->
     <string name="data_transmission_info">* Data transmitted\nsince last boot</string>
+
+    <!-- Add these inside the <resources> tag -->
+    <string name="app_settings">App Settings</string>
+    <string name="view_manifest">View Manifest</string>
 </resources>

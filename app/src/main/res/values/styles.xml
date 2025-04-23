@@ -9,6 +9,10 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:statusBarColor">@color/sams_club_dark_blue</item>
         
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+        
         <!-- Add popup menu styling -->
         <item name="popupMenuStyle">@style/Widget.AppView.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.AppView.PopupMenu</item>
@@ -20,27 +24,5 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:itemBackground">?attr/colorSurface</item>
         <item name="android:popupBackground">?attr/colorSurface</item>
-    </style>
-
-    <!-- Theme of the app for light mode -->
-    <style name="Theme.AppView.Light" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <item name="colorPrimary">@color/sams_club_dark_blue</item>
-        <item name="colorPrimaryVariant">@color/sams_club_dark_blue</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/sams_club_light_blue</item>
-        <item name="colorSecondaryVariant">@color/sams_club_light_blue</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">@color/sams_club_dark_blue</item>
-    </style>
-
-    <!-- Theme of the app for dark mode -->
-    <style name="Theme.AppView.Dark" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/sams_club_dark_blue</item>
-        <item name="colorPrimaryVariant">@color/sams_club_dark_blue</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/sams_club_light_blue</item>
-        <item name="colorSecondaryVariant">@color/sams_club_light_blue</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">@color/sams_club_dark_blue</item>
     </style>
 </resources>

@@ -9,20 +9,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class AppListAdapter(private var apps: List<AppInfo>) :
-    RecyclerView.Adapter<AppListAdapter.AppListViewHolder>() {
-
-    // Interface for item click events
-    interface OnAppClickListener {
-        fun onAppClick(packageName: String)
-    }
-
-    private var appClickListener: OnAppClickListener? = null
-
-    // Set click listener
-    fun setOnAppClickListener(listener: OnAppClickListener) {
-        appClickListener = listener
-    }
+class AppListAdapter(
+    private var apps: List<AppInfo>,
+    private val onItemClick: (AppInfo) -> Unit
+) : RecyclerView.Adapter<AppListAdapter.AppListViewHolder>() {
 
     // ViewHolder holds references to the views in list_item_app.xml
     class AppListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -30,7 +20,7 @@ class AppListAdapter(private var apps: List<AppInfo>) :
         val nameTextView: TextView = view.findViewById(R.id.tv_app_name)
         val packageTextView: TextView = view.findViewById(R.id.tv_package_name)
         val installDateTextView: TextView = view.findViewById(R.id.tv_app_install_time)
-        val updateDateTextView: TextView = view.findViewById(R.id.tv_app_update_time) // Updated reference
+        val updateDateTextView: TextView = view.findViewById(R.id.tv_app_update_time)
         val versionTextView: TextView = view.findViewById(R.id.tv_app_version)
         val typeTextView: TextView = view.findViewById(R.id.tv_app_type)
     }
@@ -46,31 +36,52 @@ class AppListAdapter(private var apps: List<AppInfo>) :
         val appInfo = apps[position]
         val context = holder.itemView.context
 
-        // Bind data to the views
-        holder.nameTextView.text = appInfo.appName
-        holder.packageTextView.text = appInfo.packageName
-        holder.versionTextView.text = appInfo.versionName
-        // Update to use formatDate
-        holder.installDateTextView.text = context.getString(R.string.installed_date_format,AppListUtil.formatDate(appInfo.installTime))
-        // Bind update date
-        holder.updateDateTextView.text = context.getString(R.string.updated_date_format,AppListUtil.formatDate(appInfo.lastUpdateTime)) // Updated text
-        holder.typeTextView.text = if (appInfo.isSystemApp) {
-            context.getString(R.string.app_type_system) // Use string resource
-        } else {
-            context.getString(R.string.app_type_user) // Use string resource
+        // Add debug logging
+        android.util.Log.d("AppListAdapter", "Binding app: ${appInfo.appName}")
+        
+        // Bind data to the views with forced visibility
+        holder.nameTextView.apply {
+            text = appInfo.appName
+            visibility = View.VISIBLE
+        }
+        
+        holder.packageTextView.apply {
+            text = appInfo.packageName
+            visibility = View.VISIBLE
+        }
+        
+        holder.versionTextView.apply {
+            text = appInfo.versionName
+            visibility = View.VISIBLE
+        }
+        
+        holder.installDateTextView.apply {
+            text = context.getString(R.string.installed_format, AppListUtil.formatDate(appInfo.installTime))
+            visibility = View.VISIBLE
+        }
+        
+        holder.updateDateTextView.apply {
+            text = context.getString(R.string.last_updated_format, AppListUtil.formatDate(appInfo.lastUpdateTime))
+            visibility = View.VISIBLE
+        }
+        
+        holder.typeTextView.apply {
+            text = if (appInfo.isSystemApp) {
+                context.getString(R.string.system_app)
+            } else {
+                context.getString(R.string.user_app)
+            }
+            visibility = View.VISIBLE
         }
 
-        // Load icon using Glide (or Picasso)
+        // Load icon using Glide
         Glide.with(context)
             .load(appInfo.icon)
-            // Optional: Add placeholder and error drawables
-            // .placeholder(R.drawable.ic_placeholder)
-            // .error(R.drawable.ic_error)
             .into(holder.iconImageView)
 
         // Set click listener for the entire item
         holder.itemView.setOnClickListener {
-            appClickListener?.onAppClick(appInfo.packageName)
+            onItemClick(appInfo)
         }
     }
 
@@ -81,6 +92,38 @@ class AppListAdapter(private var apps: List<AppInfo>) :
         val diffResult = DiffUtil.calculateDiff(AppDiffCallback(apps, newApps))
         apps = newApps
         diffResult.dispatchUpdatesTo(this)
+    }
+
+    private var originalApps: List<AppInfo> = emptyList()
+    private var currentQuery: String = ""
+
+    fun updateList(newApps: List<AppInfo>) {
+        originalApps = newApps
+        filter(currentQuery) // Apply current filter to new data
+    }
+
+    fun filter(query: String) {
+        currentQuery = query
+        val filteredList = if (query.isEmpty()) {
+            originalApps
+        } else {
+            originalApps.filter { app ->
+                app.appName.contains(query, ignoreCase = true) ||
+                app.packageName.contains(query, ignoreCase = true)
+            }
+        }
+        updateData(filteredList)
+    }
+
+    fun sort(criteria: SortCriteria) {
+        val sortedList = when (criteria) {
+            SortCriteria.NAME -> apps.sortedBy { it.appName.lowercase() }
+            SortCriteria.PACKAGE -> apps.sortedBy { it.packageName.lowercase() }
+            SortCriteria.TYPE -> apps.sortedBy { it.isSystemApp }
+            SortCriteria.DATE -> apps.sortedByDescending { it.installTime }
+            SortCriteria.SIZE -> apps.sortedByDescending { it.versionCode }
+        }
+        updateData(sortedList)
     }
 
     class AppDiffCallback(
