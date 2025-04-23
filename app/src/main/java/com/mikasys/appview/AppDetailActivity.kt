@@ -25,6 +25,8 @@ import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 /**
  * Activity that displays detailed information about an installed application.

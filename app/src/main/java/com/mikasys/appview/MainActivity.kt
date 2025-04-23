@@ -174,9 +174,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAboutDialog() {
+        val uptimeMillis = android.os.SystemClock.elapsedRealtime()
+        val days = uptimeMillis / (24 * 60 * 60 * 1000)
+        val hours = (uptimeMillis % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+        val minutes = (uptimeMillis % (60 * 60 * 1000)) / (60 * 1000)
+
+        val message = """
+            AppView Version: ${BuildConfig.VERSION_NAME}
+            
+            Michael Perry
+            Senior Systems Engineer
+            SCTEUC - Sam's Club
+            
+            Uptime: ${days}d ${hours}h ${minutes}m
+        """.trimIndent()
+
         AlertDialog.Builder(this)
             .setTitle("About AppView")
-            .setMessage("AppView is a simple application viewer that helps you manage and explore installed applications on your device.")
+            .setMessage(message)
             .setPositiveButton("OK", null)
             .show()
     }
